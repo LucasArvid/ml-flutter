@@ -1,10 +1,8 @@
-import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tflite/tflite.dart';
-import 'dart:developer';
 import "dart:typed_data";
 
 void main() {
@@ -64,7 +62,6 @@ void runExperiment() async {
 // Prepares the image by getting path
   prepareImage(int iteration) async {
     ByteData data = await rootBundle.load('assets/images/image_00$iteration.jpg');
-    log("image: image_00$iteration.jpg");
     String directory = (await getTemporaryDirectory()).path;
     File file = await writeToFile(data, '$directory/image_$iteration.jpg');
     
