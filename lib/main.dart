@@ -2,8 +2,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:tflite/tflite.dart';
+//import 'package:tflite/tflite.dart';
+import 'package:tensorflowexjobb/tensorflowexjobb.dart';
 import "dart:typed_data";
+import 'dart:developer';
 
 void main() {
   runApp(MyApp());
@@ -39,18 +41,23 @@ class _TfliteHomeState extends State<TfliteHome> {
 void runExperiment() async {
   await loadModel();
   for (int i = 1; i <= _numOfPredictions; i++) {
+      
       await prepareImage(i);
+      log("time : hello");
+      await getImageProcessing();
+      log("time : hello");
       await getImage();
+      log("time : hello");
   } 
   exit(0);
 }
 
 // Loads float point mobilnet model, expects 224x224 images
   loadModel() async {
-    Tflite.close();
+    Tensorflowexjobb.close();
     try { 
       String res;
-      res = await Tflite.loadModel(
+      res = await Tensorflowexjobb.loadModel(
         model: "assets/tflite/mobilenet_v1_1.0_224.tflite",
         labels: "assets/tflite/mobilenet_v1_1.0_224.txt",
         numThreads: 1,
@@ -77,9 +84,18 @@ void runExperiment() async {
     });
 
   }
+
+getImageProcessing() async {
+  await Tensorflowexjobb.loadImageBitmap(
+    path: _file.path,
+    imageMean: 127.5,
+    imageStd: 127.5, 
+    asynch: false,
+  );
+}
 // Image inference, does ImageProcess (bitmap to ByteBuffer) and tflite inference.
   predictImageClassification() async {
-    var recognitions = await Tflite.runModelOnImage(
+    var recognitions = await Tensorflowexjobb.runModelOnImage(
       path: _file.path,
       numResults: 6,
       threshold: 0.05,
